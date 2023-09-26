@@ -29,7 +29,7 @@ const signup = async (req,res) =>{
 
         //Token Generation
 
-        const token = jwt.sign({email : result.email, id : result_id}, SECRET_KEY );
+        const token = jwt.sign({email : result.email, id : result._id}, SECRET_KEY );
         res.status(201).json({user:result, token:token});
 
     }
@@ -45,9 +45,9 @@ const login = async (req,res) =>{
     const {email,password} = req.body;
 
     try {
-        const existingUser = await userModel.findOne({ email:email });
-
         //If user exists
+
+        const existingUser = await userModel.findOne({ email:email });
 
         if(!existingUser){
             return res.status(404).json({message : "User not found"});
@@ -56,16 +56,15 @@ const login = async (req,res) =>{
         const matchPassword = await bycrypt.compare(password , existingUser.password);
 
         if(!matchPassword){
-            return res.status(400).json({message : "Invalid credentials"
-            });
+            return res.status(400).json({message : "Invalid credentials"});
 
         }
-        const token = jwt.sign({email : existingUser.email, id : existingUser_id}, SECRET_KEY );
-        res.status(201).json({user:result, token:token});
-
+        const token = jwt.sign({email : existingUser.email, id : existingUser._id}, SECRET_KEY );
+        res.status(201).json({user:existingUser , token:token});
 
         
-    } catch (error) {
+    }
+    catch (error) {
         console.log("error");
         res.status(500).json({message : "Something is not right!"});
     }
